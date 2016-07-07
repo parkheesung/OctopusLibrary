@@ -20,9 +20,9 @@ namespace OctopusLibrary.Repository
         Task<DataTable> ExecuteTableAsync();
         SqlDataReader ExecuteReader();
         Task<SqlDataReader> ExecuteReaderAsync();
-        T ExecuteMapper<T>(T returnModel) where T : new();
-        Task<T> ExecuteMapperAsync<T>(T returnModel) where T : new();
-        List<T> ExecuteList<T>(List<T> returnModel) where T : new();
-        Task<List<T>> ExecuteListAsync<T>(List<T> returnModel) where T : new();
+        T ExecuteMapper<T>() where T : new();
+        Task<T> ExecuteMapperAsync<T>() where T : new();
+        List<T> ExecuteList<T>() where T : new();
+        Task<List<T>> ExecuteListAsync<T>() where T : new();
     }
 }

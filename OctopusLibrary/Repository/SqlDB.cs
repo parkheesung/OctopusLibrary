@@ -116,7 +116,7 @@ namespace OctopusLibrary.Repository
             return Task.Factory.StartNew(() => ExecuteReader());
         }
 
-        public virtual T ExecuteMapper<T>(T returnModel) where T : new()
+        public virtual T ExecuteMapper<T>() where T : new()
         {
             T result = new T();
 
@@ -133,12 +133,12 @@ namespace OctopusLibrary.Repository
             return result;
         }
 
-        public virtual Task<T> ExecuteMapperAsync<T>(T returnModel) where T : new()
+        public virtual Task<T> ExecuteMapperAsync<T>() where T : new()
         {
-            return Task.Factory.StartNew(() => ExecuteMapper<T>(returnModel));
+            return Task.Factory.StartNew(() => ExecuteMapper<T>());
         }
 
-        public virtual List<T> ExecuteList<T>(List<T> returnModel) where T : new()
+        public virtual List<T> ExecuteList<T>() where T : new()
         {
             List<T> result = new List<T>();
 
@@ -155,9 +155,9 @@ namespace OctopusLibrary.Repository
             return result;
         }
 
-        public virtual Task<List<T>> ExecuteListAsync<T>(List<T> returnModel) where T : new()
+        public virtual Task<List<T>> ExecuteListAsync<T>() where T : new()
         {
-            return Task.Factory.StartNew(() => ExecuteList<T>(returnModel));
+            return Task.Factory.StartNew(() => ExecuteList<T>());
         }
 
         public virtual void Dispose()
