@@ -166,6 +166,7 @@
     <Compile Include="Repository\SqlDB.cs" />
     <Compile Include="Utility\FileHandler.cs" />
     <Compile Include="Utility\MailHandler.cs" />
+    <Compile Include="Utility\Randomizer.cs" />
     <Compile Include="Web\CookieHelper.cs" />
     <Compile Include="Web\CryptoCookie.cs" />
     <Compile Include="Web\CryptoCookieBase.cs" />
