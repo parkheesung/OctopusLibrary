@@ -222,6 +222,78 @@ namespace OctopusLibrary.Utility
         }
 
         /// <summary>
+        /// 파일 업로드
+        /// </summary>
+        /// <param name="RequestFile"></param>
+        /// <returns></returns>
+        public ReturnData SaveFile(byte[] RequestFile, string fileName, string fileExtension)
+        {
+            ReturnData result = new ReturnData();
+
+            try
+            {
+                if (RequestFile.Length > this.MaxContentSize)
+                {
+                    result.Error("파일이 용량({0}byte)을 초과했습니다. 대상 파일 용량은 {1}byte 입니다.", this.MaxContentSize, RequestFile.Length);
+                }
+                else
+                {
+                    if (fileName.IndexOf(fileExtension) > -1)
+                    {
+                        fileName = fileName.Substring(0, fileName.LastIndexOf(fileExtension));
+                    }
+
+                    string fullFileName = Path.Combine(this.ServerPath, String.Format("{0}{1}", fileName, fileExtension));
+                    if (this.ByteArrayToFile(fullFileName, RequestFile))
+                    {
+                        if (String.IsNullOrEmpty(this.UseExtension) || this.UseExtension.Equals("*") || this.UseExtension.ToLower().IndexOf(fileExtension.ToLower()) > -1)
+                        {
+                            result.Check = true;
+                            result.Value = String.Format("{0}{1}{2}", this.UrlPath, fileName, fileExtension);
+                        }
+                        else
+                        {
+                            result.Error("업로드할 수 없는 파일 속성입니다.");
+                        }
+                    }
+                    else
+                    {
+                        result.Error("파일을 저장하지 못했습니다.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Error(ex);
+            }
+
+            return result;
+        }
+
+        public bool ByteArrayToFile(string _FileName, byte[] _ByteArray)
+        {
+            try
+            {
+                // Open file for reading
+                System.IO.FileStream _FileStream =
+                   new System.IO.FileStream(_FileName, System.IO.FileMode.Create,
+                                            System.IO.FileAccess.Write);
+                // Writes a block of bytes to this stream using data from
+                // a byte array.
+                _FileStream.Write(_ByteArray, 0, _ByteArray.Length);
+
+                // close file stream
+                _FileStream.Close();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// 지정 폴더내에서 고유파일 생성
         /// </summary>
         /// <param name="fileName">파일명</param>

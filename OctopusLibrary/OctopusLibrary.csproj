@@ -142,7 +142,6 @@
     <Compile Include="Data\SqlType.cs" />
     <Compile Include="HtmlHelpers\ExHelpers.cs" />
     <Compile Include="HtmlHelpers\PagingHelpers.cs" />
-    <Compile Include="ILogger.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Models\ReturnData.cs" />
     <Compile Include="MVCHelper\BaseController.cs" />
@@ -176,7 +175,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Abstract\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy OctopusLibrary.??? z:\Library</PostBuildEvent>

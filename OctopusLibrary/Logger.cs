@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NLog;
+﻿using NLog;
 using NLog.Config;
 using NLog.Targets;
+using System;
 using System.Reflection;
+using System.Text;
 
 namespace OctopusLibrary
 {
-    public class Logger : ILogger
+    public class Logger
     {
         private static NLog.Logger logger;
 
@@ -29,9 +26,10 @@ namespace OctopusLibrary
             config.LoggingRules.Add(rule1);
 
             FileTarget fileTarget = new FileTarget();
-            config.AddTarget("file", fileTarget);
+            fileTarget.Encoding = Encoding.UTF8;
             fileTarget.FileName = String.Format("{0}/LogData/{1}/{2}/nLog_{3}.txt", "${basedir}", "${level}", DateTime.Now.ToString("yyyyMM"), DateTime.Now.ToString("yyyyMMdd"));
             fileTarget.Layout = String.Format("{0}[{1}] : {2}", "${logger}", DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"), "${message}");
+            config.AddTarget("file", fileTarget);
 
             LoggingRule rule2 = new LoggingRule("*", LogLevel.Debug, fileTarget);
             config.LoggingRules.Add(rule2);
@@ -44,22 +42,22 @@ namespace OctopusLibrary
         {
         }
 
-        public void ErrorFormat(string msg, params object[] parameters)
+        public static void ErrorFormat(string msg, params object[] parameters)
         {
             Error(msg, parameters);
         }
 
-        public void InfoFormat(string msg, params object[] parameters)
+        public static void InfoFormat(string msg, params object[] parameters)
         {
             Info(msg, parameters);
         }
 
-        public void WarnFormat(string msg, params object[] parameters)
+        public static void WarnFormat(string msg, params object[] parameters)
         {
             Warn(msg, parameters);
         }
 
-        public void DebugFormat(string msg, params object[] parameters)
+        public static void DebugFormat(string msg, params object[] parameters)
         {
             Debug(msg, parameters);
         }
