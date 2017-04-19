@@ -136,6 +136,7 @@
     <Compile Include="Crypto\Base64.cs" />
     <Compile Include="Crypto\BitCrypto.cs" />
     <Compile Include="Crypto\Salt.cs" />
+    <Compile Include="Crypto\Sha256.cs" />
     <Compile Include="Crypto\Sha512.cs" />
     <Compile Include="Data\DataHandler.cs" />
     <Compile Include="Data\MssqlQuery.cs" />
