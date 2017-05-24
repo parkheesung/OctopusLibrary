@@ -145,6 +145,7 @@
     <Compile Include="HtmlHelpers\PagingHelpers.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Models\ReturnData.cs" />
+    <Compile Include="Models\ReturnValues.cs" />
     <Compile Include="MVCHelper\BaseController.cs" />
     <Compile Include="MVCHelper\ConfigHandler.cs" />
     <Compile Include="MVCHelper\Filters\CompressAttribute.cs" />

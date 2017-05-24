@@ -21,7 +21,7 @@ namespace OctopusLibrary.Web
 
             try
             {
-                HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(key);
+                HttpCookie cookie = HttpContext.Current.Request.Cookies[key];
                 if (cookie == null)
                 {
                     result = false;
@@ -31,8 +31,14 @@ namespace OctopusLibrary.Web
                     result = true;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Fatal("==[ UVCFramework.Web.Crypto ]==");
+                Logger.Fatal("CryptoCookie -> ExistsCookie Fail (Parapmeter [ key : {0} ])", key);
+                if (ex.InnerException != null && !String.IsNullOrEmpty(ex.InnerException.Message))
+                {
+                    Logger.Fatal("Exception Detail : {0}", ex.InnerException.Message);
+                }
                 result = false;
             }
 
@@ -48,14 +54,27 @@ namespace OctopusLibrary.Web
         /// <returns></returns>
         public static string GetCookie(string hashKey, string key, string defaultValue = "")
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(key);
-            if (cookie == null)
+            try
             {
-                return defaultValue;
+                HttpCookie cookie = HttpContext.Current.Request.Cookies[key];
+                if (cookie == null)
+                {
+                    return defaultValue;
+                }
+                else
+                {
+                    return HttpContext.Current.Server.UrlDecode(AES256.Decrypt(cookie.Value, hashKey));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return HttpContext.Current.Server.UrlDecode(AES256.Decrypt(cookie.Value, hashKey));
+                Logger.Fatal("==[ UVCFramework.Web.Crypto ]==");
+                Logger.Fatal("CryptoCookie -> GetCookie Fail (Parapmeter [ hashKey : {0}, key : {1}, defaultValue : {2} ])", hashKey, key, defaultValue);
+                if (ex.InnerException != null && !String.IsNullOrEmpty(ex.InnerException.Message))
+                {
+                    Logger.Fatal("Exception Detail : {0}", ex.InnerException.Message);
+                }
+                return defaultValue;
             }
         }
 
@@ -67,14 +86,27 @@ namespace OctopusLibrary.Web
         /// <returns></returns>
         public static string GetCookie(string key, string defaultValue = "")
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(key);
-            if (cookie == null)
+            try
             {
-                return defaultValue;
+                HttpCookie cookie = HttpContext.Current.Request.Cookies[key];
+                if (cookie == null)
+                {
+                    return defaultValue;
+                }
+                else
+                {
+                    return HttpContext.Current.Server.UrlDecode(AES256.Decrypt(cookie.Value, Salt.PrivateKey));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return HttpContext.Current.Server.UrlDecode(AES256.Decrypt(cookie.Value, Salt.PrivateKey));
+                Logger.Fatal("==[ UVCFramework.Web.Crypto ]==");
+                Logger.Fatal("CryptoCookie -> GetCookie Fail (Parapmeter [ key : {0}, defaultValue : {1} ])", key, defaultValue);
+                if (ex.InnerException != null && !String.IsNullOrEmpty(ex.InnerException.Message))
+                {
+                    Logger.Fatal("Exception Detail : {0}", ex.InnerException.Message);
+                }
+                return defaultValue;
             }
         }
 
@@ -90,14 +122,21 @@ namespace OctopusLibrary.Web
                 HttpCookie cookie = null;
                 foreach (string key in keys)
                 {
-                    cookie = HttpContext.Current.Request.Cookies.Get(key);
+                    cookie = HttpContext.Current.Request.Cookies[key];
                     cookie.Value = null;
-                    cookie.Expires = DateTime.Now.AddDays(-1);
+                    cookie.Expires = DateTime.Now.AddDays(-1d);
+                    HttpContext.Current.Response.Cookies.Add(cookie);
                     HttpContext.Current.Response.Cookies.Remove(key);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Fatal("==[ UVCFramework.Web.Crypto ]==");
+                Logger.Fatal("CryptoCookie -> RemoveClear Fail");
+                if (ex.InnerException != null && !String.IsNullOrEmpty(ex.InnerException.Message))
+                {
+                    Logger.Fatal("Exception Detail : {0}", ex.InnerException.Message);
+                }
             }
             finally
             {
@@ -112,18 +151,24 @@ namespace OctopusLibrary.Web
         /// <param name="key">삭제할 쿠키 이름</param>
         public static void RemoveCookie(string key)
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(key);
             try
             {
-                if (cookie != null)
+                if (HttpContext.Current.Request.Cookies[key] != null)
                 {
-                    cookie.Value = null;
-                    cookie.Expires = DateTime.Now.AddDays(-1);
-                    HttpContext.Current.Response.Cookies.Set(cookie);
+                    HttpCookie cookie = new HttpCookie(key);
+                    cookie.Expires = DateTime.Now.AddDays(-1d);
+                    HttpContext.Current.Response.Cookies.Add(cookie);
                 }
+
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Fatal("==[ UVCFramework.Web.Crypto ]==");
+                Logger.Fatal("CryptoCookie -> RemoveCookie Fail (Parapmeter [ key : {0} ])", key);
+                if (ex.InnerException != null && !String.IsNullOrEmpty(ex.InnerException.Message))
+                {
+                    Logger.Fatal("Exception Detail : {0}", ex.InnerException.Message);
+                }
             }
             finally
             {
@@ -139,7 +184,7 @@ namespace OctopusLibrary.Web
         public static void SetCookie(string key, string value)
         {
             //SetCookie(key, value, DateTime.Now.AddDays(1));
-            HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(key);
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[key];
             if (cookie == null) cookie = new HttpCookie(key);
             cookie.Value = AES256.Encrypt(HttpContext.Current.Server.UrlEncode(value), Salt.PrivateKey);
             HttpContext.Current.Response.Cookies.Add(cookie);
@@ -153,7 +198,7 @@ namespace OctopusLibrary.Web
         /// <param name="expireDate">쿠키 만료일</param>
         public static void SetCookie(string key, string value, DateTime expireDate)
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(key);
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[key];
             if (cookie == null) cookie = new HttpCookie(key);
             cookie.Value = AES256.Encrypt(HttpContext.Current.Server.UrlEncode(value), Salt.PrivateKey);
             cookie.Expires = expireDate;
@@ -167,7 +212,7 @@ namespace OctopusLibrary.Web
         /// <param name="value">저장할 값</param>
         public static void SetCookie(string hashKey, string key, string value)
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(key);
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[key];
             if (cookie == null) cookie = new HttpCookie(key);
             cookie.Value = AES256.Encrypt(HttpContext.Current.Server.UrlEncode(value), hashKey);
             HttpContext.Current.Response.Cookies.Add(cookie);
@@ -181,7 +226,7 @@ namespace OctopusLibrary.Web
         /// <param name="expireDate">쿠키 만료일</param>
         public static void SetCookie(string hashKey, string key, string value, DateTime expireDate)
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(key);
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[key];
             if (cookie == null) cookie = new HttpCookie(key);
             cookie.Value = AES256.Encrypt(HttpContext.Current.Server.UrlEncode(value), hashKey);
             cookie.Expires = expireDate;
